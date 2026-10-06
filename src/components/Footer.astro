@@ -74,7 +74,13 @@ const year = new Date().getFullYear();
 
     <div class="flex flex-col gap-4 border-t border-white/10 py-7 text-[0.82rem] text-white/45 sm:flex-row sm:items-center sm:justify-between">
       <p>© {year} {site.legalName}. All rights reserved.</p>
-      <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em]">{site.tagline}</p>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
+        <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em]">{site.tagline}</p>
+        <p>
+          Developed by{' '}
+          <a href="https://www.neotiz.com" target="_blank" rel="noopener" class="font-medium text-white/75 underline-offset-4 transition-colors hover:text-white hover:underline active:opacity-70">Neotiz</a>
+        </p>
+      </div>
     </div>
   </div>
 </footer>
