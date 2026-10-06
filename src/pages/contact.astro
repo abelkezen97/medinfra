@@ -1,0 +1,218 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { projectTypes, projectSizes } from '../data/company';
+
+const crumbs = [{ name: 'Contact', path: '/contact/' }];
+// Set PUBLIC_FORM_ENDPOINT (e.g. a Formspree / Web3Forms / Netlify URL) to post enquiries.
+// Without it, the form opens the visitor's email client with the enquiry pre-filled.
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+const accessKey = import.meta.env.PUBLIC_FORM_ACCESS_KEY ?? '';
+
+const fieldCls =
+  'peer w-full rounded-xl border border-line bg-white px-4 pb-2.5 pt-6 text-[1rem] text-ink outline-none transition-[border-color,box-shadow] duration-300 placeholder-transparent hover:border-mist focus:border-cobalt focus:shadow-[0_0_0_4px_rgb(0_71_145/0.1)]';
+const labelCls =
+  'pointer-events-none absolute left-4 top-2 text-[0.75rem] font-medium text-mist transition-colors peer-focus:text-cobalt';
+---
+<Layout
+  title="Contact MedInfra — Start Your Healthcare Project"
+  description={`Discuss a hospital, OT/ICU, MGPS, equipment or government healthcare project. Call ${site.phone} or send an enquiry — a project engineer responds in one working day.`}
+  breadcrumbs={crumbs}
+  schema={[{ '@type': 'ContactPage', name: 'Contact MedInfra', url: `${site.url}/contact/` }]}
+>
+  <PageHero
+    kicker="Contact"
+    lines={['Start a', 'conversation with', '*MedInfra.*']}
+    lede="Share the outline of your project — stage, scale and location. A project engineer will respond with the right scope structure and next steps."
+    breadcrumbs={crumbs}
+  />
+
+  <section class="section-y bg-ivory">
+    <div class="container-x grid gap-10 lg:grid-cols-12">
+      <!-- Details -->
+      <div class="space-y-6 lg:col-span-4">
+        <div class="rounded-[22px] bg-navy-900 p-8 text-white shadow-(--shadow-floating)" data-reveal>
+          <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-sky">Registered Office</p>
+          <p class="mt-5 text-[1.05rem] font-medium">{site.legalName}</p>
+          <address class="mt-2 not-italic leading-relaxed text-white/70">
+            {site.address.line1}<br />
+            {site.address.line2}<br />
+            {site.address.locality}<br />
+            {site.address.city} – {site.address.postalDisplay}<br />
+            {site.address.region}, {site.address.country}
+          </address>
+        </div>
+
+        <div class="rounded-[22px] border border-line bg-white p-8 shadow-(--shadow-elevated)" data-reveal style="--d:1">
+          <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-cobalt">Direct</p>
+          <ul class="mt-5 space-y-4">
+            <li><a href={site.phoneHref} class="group flex items-center gap-4 text-ink"><span class="contact-ic"><Icon name="phone" class="size-4" /></span><span class="link-u">{site.phone}</span></a></li>
+            <li><a href={`mailto:${site.email}`} class="group flex items-center gap-4 text-ink"><span class="contact-ic"><Icon name="mail" class="size-4" /></span><span class="link-u">{site.email}</span></a></li>
+            <li><a href={site.url} class="group flex items-center gap-4 text-ink"><span class="contact-ic"><Icon name="globe" class="size-4" /></span><span class="link-u">www.medinfra.org</span></a></li>
+          </ul>
+        </div>
+
+        <div class="rounded-[22px] border border-line bg-white p-8 shadow-(--shadow-elevated)" data-reveal style="--d:2">
+          <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-cobalt">Project Desk Hours</p>
+          <ul class="mt-5 space-y-4 text-ink">
+            <li class="flex items-center gap-4"><span class="contact-ic"><Icon name="clock" class="size-4" /></span>{site.hours.display}</li>
+            <li class="flex items-center gap-4"><span class="contact-ic"><Icon name="pin" class="size-4" /></span>{site.serviceArea}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div id="enquiry" class="scroll-mt-28 lg:col-span-8">
+        <form
+          id="enquiry-form"
+          class="rounded-[24px] border border-line bg-paper p-7 shadow-(--shadow-floating) md:p-12"
+          data-endpoint={endpoint}
+          data-email={site.email}
+          novalidate
+          data-reveal
+        >
+          <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <h2 class="display-md text-ink">Project enquiry</h2>
+            <p class="text-[0.9rem] text-slate">Fields marked <span class="text-accent">*</span> are required.</p>
+          </div>
+
+          {accessKey && <input type="hidden" name="access_key" value={accessKey} />}
+          <input type="hidden" name="subject" value="New project enquiry — medinfra.org" />
+          <!-- Honeypot -->
+          <div class="hidden" aria-hidden="true"><label>Leave empty<input type="text" name="botcheck" tabindex="-1" autocomplete="off" /></label></div>
+
+          <div class="mt-10 grid gap-4 sm:grid-cols-2">
+            <div class="relative">
+              <input id="f-name" name="name" type="text" autocomplete="name" required placeholder="Name" class={fieldCls} />
+              <label for="f-name" class={labelCls}>Name <span class="text-accent">*</span></label>
+            </div>
+            <div class="relative">
+              <input id="f-org" name="organisation" type="text" autocomplete="organization" placeholder="Organisation" class={fieldCls} />
+              <label for="f-org" class={labelCls}>Organisation</label>
+            </div>
+            <div class="relative">
+              <input id="f-desig" name="designation" type="text" autocomplete="organization-title" placeholder="Designation" class={fieldCls} />
+              <label for="f-desig" class={labelCls}>Designation</label>
+            </div>
+            <div class="relative">
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" required placeholder="Phone" class={fieldCls} />
+              <label for="f-phone" class={labelCls}>Phone <span class="text-accent">*</span></label>
+            </div>
+            <div class="relative">
+              <input id="f-email" name="email" type="email" autocomplete="email" required placeholder="Email" class={fieldCls} />
+              <label for="f-email" class={labelCls}>Email <span class="text-accent">*</span></label>
+            </div>
+            <div class="relative">
+              <input id="f-city" name="city" type="text" autocomplete="address-level2" placeholder="City / State" class={fieldCls} />
+              <label for="f-city" class={labelCls}>City / State</label>
+            </div>
+            <div class="relative">
+              <select id="f-type" name="projectType" class={`${fieldCls} appearance-none pr-10`}>
+                <option value="">Select project type</option>
+                {projectTypes.map((t) => <option>{t}</option>)}
+              </select>
+              <label for="f-type" class={labelCls}>Project type</label>
+              <Icon name="plus" class="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-mist" />
+            </div>
+            <div class="relative">
+              <select id="f-size" name="projectSize" class={`${fieldCls} appearance-none pr-10`}>
+                <option value="">Select estimated size</option>
+                {projectSizes.map((t) => <option>{t}</option>)}
+              </select>
+              <label for="f-size" class={labelCls}>Estimated project size</label>
+              <Icon name="plus" class="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-mist" />
+            </div>
+            <div class="relative sm:col-span-2">
+              <textarea id="f-msg" name="message" rows="5" placeholder="Message" class={`${fieldCls} resize-y`}></textarea>
+              <label for="f-msg" class={labelCls}>Message — project stage, bed count, departments, site location, timeline</label>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <p class="max-w-sm text-[0.88rem] text-slate">Project details shared with MedInfra are treated as confidential.</p>
+            <button type="submit" class="btn btn-dark disabled:opacity-60">
+              <span data-label>Submit Project Enquiry</span>
+              <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+            </button>
+          </div>
+
+          <p id="form-error" class="mt-6 hidden rounded-xl bg-[#FDECEC] px-5 py-4 text-[0.95rem] text-[#9B2C2C]" role="alert"></p>
+          <div id="form-ok" class="mt-6 hidden rounded-xl border border-accent/30 bg-accent/10 px-5 py-4 text-[0.98rem] text-ink" role="status">
+            <strong>Enquiry received.</strong> A MedInfra project engineer will respond within one working day. For urgent
+            project matters, call <a href={site.phoneHref} class="font-semibold text-cobalt">{site.phone}</a>.
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .contact-ic {
+    display: grid; place-items: center;
+    width: 2.5rem; height: 2.5rem; flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--color-ivory);
+    color: var(--color-cobalt);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  a:hover .contact-ic { background: var(--color-accent); color: var(--color-navy-950); }
+  [aria-invalid='true'] { border-color: #D64545 !important; }
+</style>
+
+<script>
+  const form = document.getElementById('enquiry-form') as HTMLFormElement;
+  const ok = document.getElementById('form-ok')!;
+  const err = document.getElementById('form-error')!;
+  const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+  const label = btn.querySelector('[data-label]')!;
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const fail = (msg: string) => { err.textContent = msg; err.classList.remove('hidden'); ok.classList.add('hidden'); };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    err.classList.add('hidden');
+
+    let valid = true;
+    form.querySelectorAll<HTMLInputElement>('[required]').forEach((f) => {
+      const bad = !f.value.trim() || (f.type === 'email' && !emailRe.test(f.value));
+      f.setAttribute('aria-invalid', String(bad));
+      if (bad) valid = false;
+    });
+    if (!valid) {
+      fail('Please complete the required fields — name, phone and a valid email.');
+      (form.querySelector('[aria-invalid="true"]') as HTMLElement)?.focus();
+      return;
+    }
+    const data = new FormData(form);
+    if (data.get('botcheck')) return;
+
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      // No form service configured yet: hand the enquiry to the visitor's email client.
+      const lines = [...data.entries()]
+        .filter(([k, v]) => v && !['botcheck', 'subject', 'access_key'].includes(k))
+        .map(([k, v]) => `${k}: ${v}`);
+      window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent('Project enquiry')}&body=${encodeURIComponent(lines.join('\n'))}`;
+      return;
+    }
+
+    btn.disabled = true;
+    label.textContent = 'Sending…';
+    try {
+      const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      ok.classList.remove('hidden');
+      ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch {
+      fail(`Sorry — the enquiry could not be sent. Please email ${form.dataset.email} or call us directly.`);
+    } finally {
+      btn.disabled = false;
+      label.textContent = 'Submit Project Enquiry';
+    }
+  });
+</script>

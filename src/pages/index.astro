@@ -1,0 +1,223 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ScrollFilm from '../components/ScrollFilm.astro';
+import Icon from '../components/Icon.astro';
+import SolutionsGrid from '../components/sections/SolutionsGrid.astro';
+import Process from '../components/sections/Process.astro';
+import Sectors from '../components/sections/Sectors.astro';
+import Reasons from '../components/sections/Reasons.astro';
+import Capability from '../components/sections/Capability.astro';
+import InsightCards from '../components/sections/InsightCards.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { campusChapters, otChapters, disciplines } from '../data/company';
+import { solutions } from '../data/solutions';
+import { site } from '../data/site';
+
+const disciplineIcons = ['consult', 'utility', 'bme', 'pm'] as const;
+
+const schema = [
+  {
+    '@type': 'ItemList',
+    name: 'MedInfra healthcare project solutions',
+    itemListElement: solutions.map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: s.title,
+      url: `${site.url}/solutions/${s.slug}/`,
+    })),
+  },
+];
+---
+<Layout
+  title="MedInfra — Healthcare Infrastructure & Hospital Projects"
+  description="Hospital consultancy, modular OT & ICU, MGPS, biomedical equipment and government healthcare projects in India — one partner from concept to commissioning."
+  image="/og/medinfra-default.jpg"
+  schema={schema}
+  overlayHeader
+>
+  <!-- ============ HERO: campus flythrough, scrubbed by scroll ============ -->
+  <ScrollFilm
+    id="hero"
+    name="campus"
+    frames={141}
+    variant="hero"
+    length={400}
+    label="Aerial visualisation of a MedInfra healthcare facility project"
+    chapters={campusChapters}
+    priority
+  >
+    <div slot="intro" class="flex h-full flex-col pt-[84px]">
+      <div class="flex flex-1 items-center">
+        <div class="max-w-[58rem]">
+          <span class="kicker" data-reveal>Healthcare Infrastructure &amp; Biomedical Engineering</span>
+          <h1 class="display-xl mt-6 text-white !text-[clamp(2.5rem,5.4vw,4.75rem)]" data-split>
+            <span class="line"><span style="--i:0">Healthcare projects,</span></span>
+            <span class="line"><span style="--i:1">from <em class="text-sky">concept</em> to</span></span>
+            <span class="line"><span style="--i:2">commissioning.</span></span>
+          </h1>
+          <p class="mt-6 max-w-xl text-[1.02rem] leading-relaxed text-white/80 md:mt-7 md:text-[1.12rem]" data-reveal style="--d:3">
+            MedInfra plans, engineers, equips, executes and maintains healthcare facilities — coordinating every
+            technical discipline under one accountable platform.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3 md:mt-9" data-reveal style="--d:4">
+            <a href="/contact/" class="btn btn-primary">
+              Start Your Project
+              <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+            </a>
+            <a href="/solutions/" class="btn btn-ghost-light">Explore Our Solutions</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ScrollFilm>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="section-y bg-paper" aria-labelledby="about-title">
+    <div class="container-x">
+      <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-6">
+          <span class="kicker" data-reveal>About MedInfra</span>
+          <h2 id="about-title" class="display-lg mt-6 text-ink" data-reveal>
+            Building healthcare infrastructure that <em class="text-cobalt">performs</em>
+          </h2>
+        </div>
+        <div class="space-y-5 lg:col-span-5 lg:col-start-8 lg:pt-12">
+          <p class="lede !max-w-none" data-reveal>
+            MedInfra provides integrated healthcare project solutions for hospitals, medical colleges, diagnostic
+            centres, laboratories and government healthcare institutions.
+          </p>
+          <p class="lede !max-w-none" data-reveal>
+            From the first feasibility study to final commissioning and ongoing maintenance, we coordinate every
+            technical discipline under one accountable platform.
+          </p>
+          <div class="pt-3" data-reveal>
+            <a href="/about/" class="link-u text-cobalt">More about MedInfra <Icon name="arrow" class="size-4" strokeWidth={2} /></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- What we bring together -->
+      <div class="mt-20 border-t border-line pt-14 md:mt-24">
+        <p class="text-[0.95rem] font-medium text-slate" data-reveal>Four disciplines, one team</p>
+        <ul class="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+          {disciplines.map((d, i) => (
+            <li data-reveal style={`--d:${i}`}>
+              <span class="grid size-12 place-items-center rounded-full bg-ivory text-cobalt">
+                <Icon name={disciplineIcons[i]} class="size-5" />
+              </span>
+              <h3 class="mt-6 text-[1.1rem] font-semibold tracking-[-0.01em] text-ink">{d.title}</h3>
+              <p class="mt-2.5 text-[0.97rem] leading-relaxed text-slate">{d.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOLUTIONS ============ -->
+  <section class="section-y bg-ivory" aria-labelledby="solutions-title">
+    <div class="container-x">
+      <div class="mb-16 grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-7">
+          <span class="kicker" data-reveal>Our Solutions</span>
+          <h2 id="solutions-title" class="display-lg mt-6 text-ink" data-reveal>Nine integrated capabilities, <em class="text-cobalt">one delivery team</em></h2>
+        </div>
+        <p class="lede lg:col-span-5" data-reveal>
+          Every vertical can be engaged individually or bundled into a single turnkey scope — with the same engineering
+          standards, documentation and accountability across all of them.
+        </p>
+      </div>
+      <SolutionsGrid />
+    </div>
+  </section>
+
+  <!-- ============ OT / ICU FILM ============ -->
+  <ScrollFilm
+    id="modular-ot"
+    name="ot"
+    frames={141}
+    variant="slot"
+    length={380}
+    label="Walkthrough of a modular operation theatre and ICU"
+    chapters={otChapters}
+  >
+    <div slot="intro" class="flex h-full max-w-4xl flex-col justify-center pt-[84px]">
+      <span class="kicker kicker--dot">Modular OT &amp; ICU</span>
+      <h2 class="display-xl mt-7 text-white">Precision where it <em class="text-sky">matters most.</em></h2>
+      <a href="/solutions/modular-ot-icu/" class="link-u mt-8 text-white">Modular OT &amp; ICU solutions <Icon name="arrow" class="size-4" strokeWidth={2} /></a>
+    </div>
+  </ScrollFilm>
+
+  <!-- ============ DELIVERY MODEL ============ -->
+  <section class="section-y bg-paper" aria-labelledby="process-title">
+    <div class="container-x">
+      <div class="mb-16 grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-7">
+          <span class="kicker" data-reveal>Complete Project Delivery Model</span>
+          <h2 id="process-title" class="display-lg mt-6 text-ink" data-reveal>Eight stages. One continuous chain of <em class="text-cobalt">responsibility.</em></h2>
+        </div>
+        <p class="lede lg:col-span-5" data-reveal>
+          Each stage hands over to the next inside the same organisation — so drawings, specifications, BOQs and
+          commissioning records stay consistent from the first budget framework to the final handover.
+        </p>
+      </div>
+      <Process />
+      <div class="mt-12 flex flex-col items-start justify-between gap-6 rounded-[22px] bg-navy-900 p-8 text-white md:flex-row md:items-center md:p-10" data-reveal>
+        <p class="display-sm">One project. One team. <em class="text-sky">One point of accountability.</em></p>
+        <a href="/projects/" class="btn btn-primary shrink-0">
+          The delivery model
+          <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INDUSTRIES ============ -->
+  <section class="section-y bg-ivory" aria-labelledby="industries-title">
+    <div class="container-x">
+      <div class="mb-16 grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-7">
+          <span class="kicker" data-reveal>Industries We Serve</span>
+          <h2 id="industries-title" class="display-lg mt-6 text-ink" data-reveal>Structured for private healthcare and <em class="text-cobalt">public health</em> infrastructure</h2>
+        </div>
+        <p class="lede lg:col-span-5" data-reveal>
+          The technical scope is the same; the documentation, approvals and procurement routes are not. MedInfra is set
+          up to run both.
+        </p>
+      </div>
+      <Sectors />
+    </div>
+  </section>
+
+  <!-- ============ WHY ============ -->
+  <section class="section-y bg-paper" aria-labelledby="why-title">
+    <div class="container-x">
+      <div class="mb-20 max-w-4xl">
+        <span class="kicker" data-reveal>Why MedInfra</span>
+        <h2 id="why-title" class="display-lg mt-6 text-ink" data-reveal>Fewer interfaces. Fewer gaps. Fewer surprises at <em class="text-cobalt">commissioning.</em></h2>
+      </div>
+      <Reasons />
+    </div>
+  </section>
+
+  <Capability />
+
+  <!-- ============ INSIGHTS ============ -->
+  <section class="section-y bg-ivory" aria-labelledby="insights-title">
+    <div class="container-x">
+      <div class="mb-14 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <div class="max-w-3xl">
+          <span class="kicker" data-reveal>Insights</span>
+          <h2 id="insights-title" class="display-lg mt-6 text-ink" data-reveal>Technical notes from live healthcare projects</h2>
+        </div>
+        <a href="/insights/" class="btn btn-ghost shrink-0" data-reveal>
+          All insights
+          <span class="btn-arrow bg-ink text-white"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+        </a>
+      </div>
+      <InsightCards />
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

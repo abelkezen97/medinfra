@@ -1,0 +1,44 @@
+---
+import Icon from '../Icon.astro';
+import { solutions, photoUrl } from '../../data/solutions';
+interface Props { headingLevel?: 'h2' | 'h3'; exclude?: string; only?: string[] }
+const { headingLevel = 'h3', exclude, only } = Astro.props;
+const H = headingLevel;
+const list = solutions.filter((s) => s.slug !== exclude && (!only || only.includes(s.slug)));
+---
+<ul class="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+  {list.map((s, i) => (
+    <li data-reveal style={`--d:${i % 3}`}>
+      <a href={`/solutions/${s.slug}/`} class="sol-card group block rounded-[20px] active:opacity-80">
+        <div class="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-ivory">
+          <img
+            src={photoUrl(s.photo, 960, 720)}
+            srcset={`${photoUrl(s.photo, 480, 360)} 480w, ${photoUrl(s.photo, 960, 720)} 960w, ${photoUrl(s.photo, 1440, 1080)} 1440w`}
+            sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+            alt={s.photoAlt}
+            width="960"
+            height="720"
+            loading="lazy"
+            decoding="async"
+            class="sol-img size-full object-cover"
+          />
+          <div class="absolute inset-0 bg-cobalt/10 mix-blend-multiply" aria-hidden="true"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" aria-hidden="true"></div>
+        </div>
+        <H class="display-sm mt-6 text-ink transition-colors duration-300 group-hover:text-cobalt">{s.title}</H>
+        <p class="mt-2.5 text-[0.98rem] leading-relaxed text-slate">{s.summary}</p>
+        <span class="mt-4 inline-flex items-center gap-2 text-[0.9rem] font-medium text-cobalt">
+          Explore
+          <Icon name="arrow" class="sol-arrow size-4" strokeWidth={2} />
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .sol-img { transition: transform 1.2s var(--ease-spring); }
+  .sol-card:hover .sol-img, .sol-card:focus-visible .sol-img { transform: scale(1.05); }
+  .sol-arrow { transition: transform 0.5s var(--ease-spring); }
+  .sol-card:hover .sol-arrow { transform: translateX(6px); }
+</style>

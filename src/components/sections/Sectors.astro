@@ -1,0 +1,32 @@
+---
+import Icon from '../Icon.astro';
+import { sectors } from '../../data/company';
+const list = [
+  { key: 'private', data: sectors.private, still: '/frames/campus/still.jpg', id: 'private' },
+  { key: 'government', data: sectors.government, still: '/frames/campus/poster.webp', id: 'government' },
+];
+---
+<div class="grid gap-6 lg:grid-cols-2">
+  {list.map(({ data, still, id }, i) => (
+    <article id={id} class="group relative overflow-hidden rounded-[24px] bg-white shadow-(--shadow-elevated) transition-[transform,box-shadow] duration-700 ease-(--ease-spring) hover:-translate-y-1 hover:shadow-(--shadow-floating)" data-reveal style={`--d:${i}`}>
+      <div class="relative aspect-[16/8] overflow-hidden">
+        <img src={still} alt="" loading="lazy" decoding="async" width="1366" height="768" class="size-full object-cover transition-transform duration-[1.4s] ease-(--ease-spring) group-hover:scale-[1.04]" />
+        <div class:list={['absolute inset-0 mix-blend-multiply', i === 0 ? 'bg-cobalt/55' : 'bg-navy-700/70']} aria-hidden="true"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" aria-hidden="true"></div>
+        <span class="absolute left-6 top-6 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-white backdrop-blur-md">{data.badge}</span>
+        <h3 class="display-md absolute bottom-6 left-6 right-6 text-white">{data.title}</h3>
+      </div>
+      <div class="p-7 md:p-9">
+        <p class="text-[1.02rem] leading-relaxed text-slate">{data.text}</p>
+        <ul class="mt-7 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+          {data.items.map((it) => (
+            <li class="flex items-center gap-3 text-[0.95rem] text-ink">
+              <span class="grid size-5 shrink-0 place-items-center rounded-full bg-accent/10 text-accent"><Icon name="check" class="size-3" strokeWidth={2.4} /></span>
+              {it}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </article>
+  ))}
+</div>

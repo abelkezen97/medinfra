@@ -1,0 +1,107 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Reasons from '../components/sections/Reasons.astro';
+import Sectors from '../components/sections/Sectors.astro';
+import Capability from '../components/sections/Capability.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { disciplines, stages } from '../data/company';
+
+const crumbs = [{ name: 'About', path: '/about/' }];
+---
+<Layout
+  title="About MedInfra — Healthcare Infrastructure Partner"
+  description="Integrated healthcare project solutions for hospitals, medical colleges, diagnostic centres and government institutions — planning to maintenance, one platform."
+  breadcrumbs={crumbs}
+  schema={[{ '@type': 'AboutPage', name: 'About MedInfra', url: 'https://www.medinfra.org/about/' }]}
+>
+  <PageHero
+    kicker="About MedInfra"
+    lines={['Building healthcare', 'infrastructure', 'that *performs.*']}
+    lede="MedInfra provides integrated healthcare project solutions for hospitals, medical colleges, diagnostic centres, laboratories and government healthcare institutions."
+    breadcrumbs={crumbs}
+    image="/frames/campus/still.jpg"
+  />
+
+  <!-- Story -->
+  <section class="section-y bg-paper">
+    <div class="container-x grid gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <span class="kicker" data-reveal>One accountable platform</span>
+        <h2 class="display-lg mt-6 text-ink" data-reveal>Every technical discipline, <em class="text-cobalt">coordinated.</em></h2>
+      </div>
+      <div class="space-y-6 lg:col-span-6 lg:col-start-7">
+        <p class="lede !max-w-none" data-reveal>
+          We combine healthcare planning, engineering infrastructure, biomedical technology, procurement and project
+          management under one accountable platform.
+        </p>
+        <p class="lede !max-w-none" data-reveal>
+          From the first feasibility study to final commissioning and ongoing maintenance, MedInfra coordinates the
+          technical disciplines required to create safe, efficient and future-ready healthcare facilities.
+        </p>
+        <div class="pt-4" data-reveal>
+          <a href="/projects/" class="link-u text-cobalt">See the delivery model <Icon name="arrow" class="size-4" strokeWidth={2} /></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disciplines -->
+    <div class="container-x mt-24">
+      <ul class="grid gap-px overflow-hidden rounded-[24px] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4" data-reveal>
+        {disciplines.map((d) => (
+          <li class="bg-paper p-8 md:p-10">
+            <p class="font-display text-[3.4rem] leading-none tracking-[-0.04em] text-cobalt">{d.num}</p>
+            <h3 class="mt-8 text-[1.15rem] font-semibold tracking-[-0.01em] text-ink">{d.title}</h3>
+            <p class="mt-3 text-[0.97rem] leading-relaxed text-slate">{d.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Chain -->
+  <section class="on-dark section-y-sm relative overflow-hidden bg-navy-900 text-white">
+    <div class="container-x relative">
+      <p class="kicker kicker--dot" data-reveal>Concept to commissioning</p>
+      <ol class="mt-12 grid grid-cols-2 gap-y-10 sm:grid-cols-4 lg:grid-cols-8">
+        {stages.map((s, i) => (
+          <li class="relative pr-4" data-reveal style={`--d:${i}`}>
+            <span class="block h-px w-full bg-white/15"><span class="block h-px w-6 bg-accent"></span></span>
+            <span class="mt-5 block font-semibold text-[0.75rem] tracking-[0.1em] text-white/45">{s.num}</span>
+            <span class="display-sm mt-2 block">{s.verb}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section-y bg-paper">
+    <div class="container-x">
+      <div class="mb-20 max-w-4xl">
+        <span class="kicker" data-reveal>Why MedInfra</span>
+        <h2 class="display-lg mt-6 text-ink" data-reveal>Fewer interfaces. Fewer gaps. Fewer surprises at <em class="text-cobalt">commissioning.</em></h2>
+      </div>
+      <Reasons />
+    </div>
+  </section>
+
+  <section class="section-y bg-ivory">
+    <div class="container-x">
+      <div class="mb-16 grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-7">
+          <span class="kicker" data-reveal>Industries We Serve</span>
+          <h2 class="display-lg mt-6 text-ink" data-reveal>Private healthcare and <em class="text-cobalt">public health</em></h2>
+        </div>
+        <p class="lede lg:col-span-5" data-reveal>
+          The technical scope is the same; the documentation, approvals and procurement routes are not. MedInfra is set
+          up to run both.
+        </p>
+      </div>
+      <Sectors />
+    </div>
+  </section>
+
+  <Capability />
+  <CtaBand />
+</Layout>

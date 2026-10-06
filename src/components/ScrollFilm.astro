@@ -1,0 +1,164 @@
+---
+interface Chapter { tag: string; short?: string; title: string; text: string }
+interface Props {
+  id: string;
+  /** Folder in /public/frames */
+  name: string;
+  frames: number;
+  variant?: 'hero' | 'slot' | 'expand';
+  /** Runway length in viewport heights */
+  length?: number;
+  label: string;
+  slug?: string;
+  chapters: Chapter[];
+  specs?: string[];
+  specsNote?: string;
+  /** Load the poster eagerly (above the fold) */
+  priority?: boolean;
+}
+
+const {
+  id, name, frames, variant = 'hero', length = 420, label, chapters,
+  specs = [], specsNote, priority = false,
+} = Astro.props;
+
+const src = `/frames/${name}`;
+const n = chapters.length;
+// Chapters share the band after the intro hands over (0.16 → 0.98).
+const bands = chapters.map((_, i) => {
+  const from = 0.16 + (i / n) * 0.82;
+  const to = 0.16 + ((i + 1) / n) * 0.82 + (i === n - 1 ? 0.05 : 0);
+  return { from: from.toFixed(3), to: to.toFixed(3) };
+});
+---
+<section
+  id={id}
+  class:list={['film on-dark relative bg-navy-950 text-white', `film--${variant}`]}
+  data-film
+  data-src={src}
+  data-frames={frames}
+  data-variant={variant}
+  aria-label={label}
+>
+  <div class="film-track relative" data-film-track style={`--film-len:${length}vh`}>
+    <div class="film-stage sticky top-0 h-svh w-full overflow-hidden">
+
+      <!-- Footage -->
+      <div class="film-frame absolute inset-0 overflow-hidden will-change-transform" data-film-frame>
+        <img
+          src={`${src}/poster.webp`}
+          alt={label}
+          width="1366"
+          height={variant === 'slot' ? 616 : 768}
+          class="film-poster absolute inset-0 size-full object-cover"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchpriority={priority ? 'high' : 'auto'}
+          decoding="async"
+        />
+        <canvas class="film-canvas absolute inset-0 size-full" data-film-canvas aria-hidden="true"></canvas>
+        <!-- Colour treatment + legibility layers -->
+        <div class="absolute inset-0 bg-cobalt/15 mix-blend-multiply" aria-hidden="true"></div>
+        <div class="film-shade absolute inset-0" data-film-shade aria-hidden="true"></div>
+        <!-- Floor under the mobile caption card -->
+        <div class="absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-navy-950/70 to-transparent md:hidden" aria-hidden="true"></div>
+      </div>
+
+      <!-- Intro headline -->
+      <div class="film-intro absolute inset-0 z-10 will-change-transform" data-film-intro>
+        <div class="container-x h-full">
+          <slot name="intro" />
+        </div>
+      </div>
+
+      <!-- Design parameters (slot variant) -->
+      {specs.length > 0 && (
+        <div class="film-specs absolute inset-x-0 top-[120px] z-10 hidden md:block lg:top-[132px]">
+          <div class="container-x">
+            {specsNote && <p class="text-[0.75rem] font-medium uppercase tracking-[0.12em] text-white/50">{specsNote}</p>}
+            <ul class="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[0.9rem] text-white/45">
+              {specs.map((s) => <li class="film-spec" data-film-spec>{s}</li>)}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      <!-- Chapters: take over the headline's position, left and vertically centred -->
+      <div class="film-chapters pointer-events-none absolute inset-0 z-10 flex items-center pt-[84px]">
+        <div class="container-x w-full">
+          <ol class="film-chapter-list mx-auto max-w-[40rem] text-center md:mx-0 md:text-left">
+            {chapters.map((c, i) => (
+              <li class="film-chapter" data-film-chapter data-from={bands[i].from} data-to={bands[i].to}>
+                <p class="kicker">{c.tag}</p>
+                <h3 class="display-lg mt-5 text-white">{c.title}</h3>
+                <p class="mx-auto mt-5 max-w-lg text-[1.08rem] leading-relaxed text-white/75 md:mx-0">{c.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <!-- Journey timeline -->
+      <div class="film-timeline pointer-events-none absolute inset-x-0 bottom-0 z-10 pb-8 md:pb-10" data-film-panel aria-hidden="true">
+        <div class="container-x">
+          <ol class="grid gap-3 md:gap-6" style={`grid-template-columns:repeat(${n},minmax(0,1fr))`}>
+            {chapters.map((c) => (
+              <li class="film-step" data-film-step>
+                <span class="block h-px overflow-hidden bg-white/25">
+                  <i class="block h-full origin-left bg-white" style="transform:scaleX(0)" data-film-seg></i>
+                </span>
+                <span class="film-step-label mt-3 hidden text-[0.88rem] font-medium md:block">{c.short ?? c.tag}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Animated (JS) mode: tall runway, stacked overlays */
+  :global(.js) .film:not(:global(.film--static)) .film-track { height: var(--film-len); }
+  :global(.js) .film:not(:global(.film--static)) .film-chapter { position: absolute; top: 0; left: 0; right: 0; opacity: 0; visibility: hidden; }
+  :global(.js) .film:not(:global(.film--static)) .film-chapter-list { position: relative; min-height: 22rem; }
+  :global(.js) .film:not(:global(.film--static)) .film-timeline { opacity: 0; }
+  .film-step-label { color: rgb(255 255 255 / 0.45); transition: color 0.4s; }
+  .film-step:global(.is-active) .film-step-label { color: #fff; }
+  .film-canvas { opacity: 0; transition: opacity 0.6s ease; }
+  :global(.film--ready) .film-canvas { opacity: 1; }
+
+  .film--hero .film-shade {
+    background:
+      linear-gradient(to right, rgb(6 20 40 / 0.85) 0%, rgb(6 20 40 / 0.5) 42%, rgb(6 20 40 / 0.1) 75%),
+      linear-gradient(to top, rgb(5 13 26 / 0.92) 0%, rgb(5 13 26 / 0.35) 45%, rgb(5 13 26 / 0.55) 100%),
+      radial-gradient(120% 80% at 0% 100%, rgb(0 71 145 / 0.45), transparent 60%);
+  }
+  .film--slot .film-shade {
+    background:
+      linear-gradient(to right, rgb(6 20 40 / 0.75) 0%, rgb(6 20 40 / 0.3) 45%, transparent 75%),
+      linear-gradient(to top, rgb(5 13 26 / 0.9) 0%, rgb(5 13 26 / 0.2) 50%, rgb(5 13 26 / 0.6) 100%);
+  }
+  .film--slot .film-frame { clip-path: inset(36% 10% round 18px); }
+  .film--expand { background: var(--color-paper); }
+  .film--expand .film-frame { clip-path: inset(24px max(20px, calc((100vw - 1320px) / 2 + clamp(20px, 4vw, 48px))) round 24px); }
+  .film--expand .film-shade {
+    background: linear-gradient(to top, rgb(6 20 40 / 0.85) 0%, rgb(6 20 40 / 0.25) 55%, rgb(6 20 40 / 0.35) 100%);
+  }
+
+  .film-spec { transition: color 0.5s; }
+  .film-spec:global(.is-lit) { color: #fff; }
+
+  /* Static mode (no JS / reduced motion): poster + all chapters in a grid */
+  :global(html:not(.js)) .film .film-stage,
+  :global(.film--static) .film-stage { position: relative; height: auto; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; }
+  :global(html:not(.js)) .film .film-frame,
+  :global(.film--static) .film-frame { clip-path: none !important; }
+  :global(html:not(.js)) .film .film-intro,
+  :global(.film--static) .film-intro { position: relative; padding-top: 40vh; padding-bottom: 3rem; }
+  :global(html:not(.js)) .film .film-chapters,
+  :global(.film--static) .film-chapters { position: relative; }
+  :global(html:not(.js)) .film .film-chapter-list,
+  :global(.film--static) .film-chapter-list { display: grid; gap: 2.5rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+  :global(.film--static) .film-timeline { display: none; }
+  
+</style>

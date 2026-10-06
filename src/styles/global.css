@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/inter";
+
+/* ============================================================
+   DESIGN TOKENS
+   Corporate blue system built on the MedInfra brand blue #004791.
+   ============================================================ */
+@theme {
+  --font-display: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Small labels use the body face — no monospace */
+  --font-mono: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand blues */
+  --color-accent: #1A5FD0;      /* primary action blue */
+  --color-accent-600: #144BA8;  /* hover / pressed */
+  --color-sky: #9CC2F7;         /* emphasis on dark backgrounds */
+  --color-cobalt: #004791;      /* MedInfra brand blue — emphasis on light */
+  --color-cobalt-400: #3A7BC8;
+
+  /* Navy scale (derived from brand blue, darkened toward ink) */
+  --color-navy-950: #061428;
+  --color-navy-900: #0A1D3A;
+  --color-navy-800: #0F2849;
+  --color-navy-700: #17345C;
+  --color-navy-600: #234673;
+
+  /* Cool neutrals */
+  --color-ivory: #F4F6F9;
+  --color-bone: #E9EDF2;
+  --color-paper: #FFFFFF;
+  --color-ink: #0E1A2B;
+  --color-slate: #4D5B6E;
+  --color-mist: #8A96A8;
+  --color-line: #E1E6ED;
+
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* Layered, tinted shadows: base → elevated → floating */
+  --shadow-elevated: 0 1px 1px rgb(8 21 42 / 0.04), 0 4px 12px -2px rgb(8 21 42 / 0.06), 0 16px 32px -12px rgb(0 71 145 / 0.10);
+  --shadow-floating: 0 2px 4px rgb(8 21 42 / 0.05), 0 12px 28px -6px rgb(8 21 42 / 0.12), 0 40px 80px -24px rgb(0 71 145 / 0.22);
+  --shadow-glow: 0 10px 30px -10px rgb(26 95 208 / 0.55);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    overflow-x: clip;
+  }
+  h1, h2, h3, h4 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--color-accent); color: #fff; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ============================================================
+   COMPONENT PRIMITIVES
+   ============================================================ */
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  /* Spacing rhythm: 3 section sizes, used consistently */
+  .section-y { padding-block: clamp(5rem, 11vw, 9.5rem); }
+  .section-y-sm { padding-block: clamp(3.5rem, 7vw, 6rem); }
+
+  /* Display headings — Manrope, tight */
+  .display-xl {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 6vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+  .display-lg {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+  .display-md {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.7rem, 2.7vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+  .display-sm {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+  .display-xl em, .display-lg em, .display-md em, .display-sm em { font-style: normal; }
+
+  .lede {
+    font-size: clamp(1.075rem, 1.35vw, 1.25rem);
+    line-height: 1.7;
+    color: var(--color-slate);
+    max-width: 62ch;
+  }
+
+  /* Section label */
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-accent);
+  }
+  .kicker::before {
+    content: "";
+    width: 1.5rem;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+  }
+  .on-dark .kicker { color: var(--color-sky); }
+
+  /* Buttons */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.95rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    isolation: isolate;
+    overflow: hidden;
+    transition: transform 0.5s var(--ease-spring), background-color 0.3s ease, color 0.3s ease, box-shadow 0.4s var(--ease-spring);
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(0.98); transition-duration: 0.1s; }
+  .btn .btn-arrow {
+    display: grid; place-items: center;
+    width: 1.75rem; height: 1.75rem; margin-right: -0.6rem;
+    border-radius: 999px;
+    transition: transform 0.5s var(--ease-spring);
+  }
+  .btn:hover .btn-arrow { transform: translateX(3px) rotate(-45deg); }
+
+  .btn-primary { background: var(--color-accent); color: #fff; }
+  .btn-primary .btn-arrow { background: rgb(255 255 255 / 0.16); color: #fff; }
+  .btn-primary:hover { background: var(--color-accent-600); box-shadow: var(--shadow-glow); }
+
+  .btn-dark { background: var(--color-navy-900); color: #fff; }
+  .btn-dark .btn-arrow { background: rgb(255 255 255 / 0.14); color: #fff; }
+  .btn-dark:hover { background: var(--color-navy-700); box-shadow: var(--shadow-floating); }
+
+  .btn-ghost-light { color: #fff; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28); }
+  .btn-ghost-light:hover { background: rgb(255 255 255 / 0.08); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.6); }
+
+  .btn-ghost { color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--color-line); }
+  .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1px var(--color-ink), var(--shadow-elevated); }
+
+  /* Underline link */
+  .link-u {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+  }
+  .link-u::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -3px; height: 1px;
+    background: currentColor;
+    transform-origin: right;
+    transform: scaleX(0.35);
+    opacity: 0.5;
+    transition: transform 0.6s var(--ease-spring), opacity 0.3s;
+  }
+  .link-u:hover::after, .link-u:focus-visible::after { transform: scaleX(1); transform-origin: left; opacity: 1; }
+  .link-u:active { opacity: 0.7; }
+  .link-u svg { transition: transform 0.5s var(--ease-spring); }
+  .link-u:hover svg { transform: translateX(4px); }
+
+  /* Prose for insight articles */
+  .prose-mi { color: var(--color-slate); font-size: 1.125rem; line-height: 1.8; }
+  .prose-mi > * + * { margin-top: 1.4em; }
+  .prose-mi h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+    line-height: 1.2; letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin-top: 2.2em;
+  }
+  .prose-mi h3 { font-weight: 600; font-size: 1.2rem; color: var(--color-ink); margin-top: 1.8em; }
+  .prose-mi strong { color: var(--color-ink); font-weight: 600; }
+  .prose-mi ul { padding-left: 0; list-style: none; }
+  .prose-mi ul li { position: relative; padding-left: 1.6rem; }
+  .prose-mi ul li + li { margin-top: 0.55em; }
+  .prose-mi ul li::before {
+    content: ""; position: absolute; left: 0; top: 0.75em;
+    width: 0.65rem; height: 1px; background: var(--color-accent);
+  }
+  .prose-mi a { color: var(--color-cobalt); text-decoration: underline; text-underline-offset: 3px; }
+  .prose-mi blockquote {
+    border-left: 2px solid var(--color-accent);
+    padding-left: 1.4rem;
+    font-family: var(--font-display);
+    font-size: 1.35rem; line-height: 1.45; font-weight: 500;
+    color: var(--color-ink);
+  }
+}
+
+/* ============================================================
+   REVEAL (progressive enhancement — JS adds .js on <html>)
+   ============================================================ */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 1s var(--ease-out-quart), transform 1.2s var(--ease-spring);
+  transition-delay: calc(var(--d, 0) * 80ms);
+}
+.js [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* Split headline lines */
+.js [data-split] .line { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.js [data-split] .line > span {
+  display: block;
+  transform: translate3d(0, 105%, 0);
+  transition: transform 1.3s var(--ease-spring);
+  transition-delay: calc(var(--i, 0) * 90ms + var(--d, 0) * 80ms);
+}
+.js [data-split].is-in .line > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal], .js [data-split] .line > span { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .btn, .link-u::after, .link-u svg { transition: none; }
+}

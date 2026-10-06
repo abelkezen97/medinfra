@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  kicker?: string;
+  title?: string;
+  text?: string;
+}
+const {
+  kicker = 'Project Consultation',
+  title = 'Planning a hospital or healthcare project?',
+  text = 'Whether you are developing a new hospital, upgrading an existing healthcare facility, setting up a medical college, modernising an OT/ICU or planning biomedical equipment procurement, MedInfra can help structure and execute the project.',
+} = Astro.props;
+---
+<section class="section-y-sm bg-paper">
+  <div class="container-x">
+    <div class="on-dark relative isolate overflow-hidden rounded-[28px] bg-navy-900 px-6 py-16 text-white shadow-(--shadow-floating) sm:px-12 md:px-16 md:py-20" data-reveal>
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(70%_90%_at_100%_0%,rgb(0_71_145/0.75),transparent_60%),radial-gradient(50%_70%_at_0%_100%,rgb(26_95_208/0.22),transparent_70%)]" aria-hidden="true"></div>
+
+      <div class="grid gap-10 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-8">
+          <span class="kicker kicker--dot">{kicker}</span>
+          <h2 class="display-lg mt-6">{title}</h2>
+          <p class="mt-6 max-w-2xl text-[1.05rem] leading-relaxed text-white/70">{text}</p>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:flex-col lg:items-end">
+          <a href="/contact/" class="btn btn-primary">
+            Discuss Your Project
+            <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+          </a>
+          <a href="/contact/#enquiry" class="btn btn-ghost-light">Request a Project Consultation</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

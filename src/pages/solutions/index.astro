@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SolutionsGrid from '../../components/sections/SolutionsGrid.astro';
+import Process from '../../components/sections/Process.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { solutions } from '../../data/solutions';
+import { site } from '../../data/site';
+
+const crumbs = [{ name: 'Solutions', path: '/solutions/' }];
+const schema = [{
+  '@type': 'ItemList',
+  name: 'Healthcare project solutions',
+  itemListElement: solutions.map((s, i) => ({
+    '@type': 'ListItem', position: i + 1, name: s.title, url: `${site.url}/solutions/${s.slug}/`,
+  })),
+}];
+---
+<Layout
+  title="Healthcare Project Solutions & Services"
+  description="Nine integrated healthcare solutions: hospital consultancy, modular OT & ICU, MGPS, biomedical equipment, CSSD, utilities, project management, AMC and more."
+  breadcrumbs={crumbs}
+  schema={schema}
+>
+  <PageHero
+    kicker="Our Solutions"
+    lines={['Nine integrated', 'capabilities.', '*One delivery team.*']}
+    lede="Every vertical can be engaged individually or bundled into a single turnkey scope — with the same engineering standards, documentation and accountability across all of them."
+    breadcrumbs={crumbs}
+  />
+
+  <section class="section-y bg-ivory">
+    <div class="container-x">
+      <h2 class="sr-only">All solutions</h2>
+      <SolutionsGrid headingLevel="h3" />
+    </div>
+  </section>
+
+  <section class="section-y bg-paper">
+    <div class="container-x">
+      <div class="mb-16 grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-7">
+          <span class="kicker" data-reveal>Turnkey or individual</span>
+          <h2 class="display-lg mt-6 text-ink" data-reveal>Each solution plugs into <em class="text-cobalt">one delivery model</em></h2>
+        </div>
+        <p class="lede lg:col-span-5" data-reveal>
+          Each stage hands over to the next inside the same organisation — so drawings, specifications, BOQs and
+          commissioning records stay consistent.
+        </p>
+      </div>
+      <Process />
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

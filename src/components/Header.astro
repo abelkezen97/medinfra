@@ -1,0 +1,178 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { nav, site } from '../data/site';
+
+interface Props {
+  /** Transparent with white logo until the page is scrolled (for full-bleed dark heroes) */
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+---
+<header
+  id="site-header"
+  data-overlay={overlay ? '' : undefined}
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-white/90 backdrop-blur-xl transition-[transform,border-color,box-shadow] duration-500 ease-(--ease-spring)"
+>
+  <div class="container-x flex h-[76px] items-center justify-between gap-8 lg:h-[84px]">
+    <a href="/" class="shrink-0 rounded-lg transition-opacity hover:opacity-80 active:opacity-60" aria-label={`${site.name} — home`}>
+      <Logo class="logo-color" />
+      {overlay && <Logo tone="white" class="logo-white" />}
+    </a>
+
+    <nav aria-label="Primary" class="hidden xl:block">
+      <ul class="flex items-center gap-8">
+        {nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class:list={[
+                'nav-link relative block whitespace-nowrap py-2 text-[0.92rem] font-medium transition-colors duration-300',
+                'hover:text-ink active:opacity-70',
+                isActive(item.href) ? 'text-ink' : 'text-slate',
+              ]}
+            >{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href="/contact/" class="btn btn-primary hidden !py-2.5 !pl-5 !text-[0.88rem] sm:inline-flex">
+        Start a Project
+        <span class="btn-arrow !size-7"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+      </a>
+      <button
+        id="menu-toggle"
+        type="button"
+        class="grid size-11 place-items-center rounded-full border border-line text-ink transition-[background-color,transform] duration-300 hover:bg-ivory active:scale-95 xl:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Open menu"
+      >
+        <Icon name="menu" class="size-5" strokeWidth={1.8} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div
+  id="mobile-menu"
+  class="invisible fixed inset-0 z-[60] bg-white opacity-0 transition-[opacity,visibility] duration-500 xl:hidden"
+  aria-hidden="true"
+>
+  <div class="container-x flex h-full flex-col">
+    <div class="flex h-[76px] items-center justify-between">
+      <Logo />
+      <button
+        id="menu-close"
+        type="button"
+        class="grid size-11 place-items-center rounded-full border border-line text-ink transition-[background-color,transform] hover:bg-ivory active:scale-95"
+        aria-label="Close menu"
+      >
+        <Icon name="close" class="size-5" strokeWidth={1.8} />
+      </button>
+    </div>
+    <nav aria-label="Mobile" class="mt-10 flex-1">
+      <ul class="divide-y divide-line border-y border-line">
+        <li><a href="/" class="mm-link">Home</a></li>
+        {nav.map((item) => (
+          <li><a href={item.href} class="mm-link" aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="space-y-3 py-8 text-slate">
+      <a href={site.phoneHref} class="block text-lg font-medium text-ink">{site.phone}</a>
+      <a href={`mailto:${site.email}`} class="block">{site.email}</a>
+      <a href="/contact/" class="btn btn-primary mt-4 w-full">Start a Project
+        <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .nav-link::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -2px; height: 2px;
+    border-radius: 2px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-spring);
+  }
+  .nav-link:hover::after, .nav-link[aria-current='page']::after { transform: scaleX(1); }
+
+  .mm-link {
+    display: block;
+    padding: 1rem 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    transition: color 0.3s, transform 0.5s var(--ease-spring);
+  }
+  .mm-link:hover, .mm-link:focus-visible { color: var(--color-accent); transform: translateX(6px); }
+  .mm-link:active { opacity: 0.7; }
+  .mm-link[aria-current='page'] { color: var(--color-accent); }
+
+  /* Overlay mode: transparent over the hero until scrolled */
+  :global(.logo-white) { display: none !important; }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] {
+    background: transparent;
+    backdrop-filter: none;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] :global(.logo-color) { display: none !important; }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] :global(.logo-white) { display: inline-flex !important; }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] .nav-link { color: rgb(255 255 255 / 0.8); }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] .nav-link:hover,
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] .nav-link[aria-current='page'] { color: #fff; }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] .nav-link::after { background: #fff; }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] #menu-toggle { color: #fff; border-color: rgb(255 255 255 / 0.3); }
+  :global(html:not(.header-scrolled)) #site-header[data-overlay] #menu-toggle:hover { background: rgb(255 255 255 / 0.1); }
+  #site-header { transition-property: transform, border-color, box-shadow, background-color; }
+
+  :global(.menu-open) #mobile-menu { visibility: visible; opacity: 1; }
+  :global(.header-scrolled) #site-header { border-color: var(--color-line); box-shadow: 0 8px 30px -18px rgb(14 26 43 / 0.25); }
+  :global(.header-hidden) #site-header { transform: translateY(-100%); }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const toggle = document.getElementById('menu-toggle')!;
+  const close = document.getElementById('menu-close')!;
+  const menu = document.getElementById('mobile-menu')!;
+
+  const setOpen = (open: boolean) => {
+    root.classList.toggle('menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    menu.setAttribute('aria-hidden', String(!open));
+    window.dispatchEvent(new CustomEvent(open ? 'mi:lock' : 'mi:unlock'));
+    if (open) close.focus();
+  };
+  toggle.addEventListener('click', () => setOpen(true));
+  close.addEventListener('click', () => { setOpen(false); toggle.focus(); });
+  menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && root.classList.contains('menu-open')) setOpen(false); });
+
+  // Hairline + shadow once scrolled; hide on scroll down, reveal on scroll up.
+  let last = 0;
+  const onScroll = () => {
+    const y = window.scrollY;
+    root.classList.toggle('header-scrolled', y > 8);
+    const hide = y > 400 && y > last + 4 && !root.classList.contains('menu-open');
+    const show = y < last - 4 || y < 400;
+    if (hide) root.classList.add('header-hidden');
+    else if (show) root.classList.remove('header-hidden');
+    last = y;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>

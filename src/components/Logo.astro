@@ -1,0 +1,28 @@
+---
+// MedInfra lockup: building mark + wordmark, side by side.
+// tone="color" for light backgrounds, tone="white" for dark ones.
+import { Image } from 'astro:assets';
+import mark from '../assets/brand/mi-mark.png';
+import markWhite from '../assets/brand/mi-mark-white.png';
+import word from '../assets/brand/mi-word.png';
+import wordWhite from '../assets/brand/mi-word-white.png';
+
+interface Props {
+  tone?: 'color' | 'white';
+  /** Height of the mark in px; the wordmark scales with it */
+  size?: number;
+  class?: string;
+  eager?: boolean;
+}
+const { tone = 'color', size = 34, class: className = '', eager = true } = Astro.props;
+const m = tone === 'white' ? markWhite : mark;
+const w = tone === 'white' ? wordWhite : word;
+const markW = Math.round(size * (mark.width / mark.height));
+const wordH = Math.round(size * 0.56);
+const wordW = Math.round(wordH * (word.width / word.height));
+const loading = eager ? 'eager' : 'lazy';
+---
+<span class:list={['inline-flex items-end', className]} style={`gap:${Math.round(size * 0.3)}px`}>
+  <Image src={m} alt="" width={markW} height={size} densities={[1, 2]} loading={loading} class="block shrink-0" />
+  <Image src={w} alt="MedInfra" width={wordW} height={wordH} densities={[1, 2]} loading={loading} class="block" />
+</span>

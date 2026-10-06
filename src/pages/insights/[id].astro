@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import SolutionsGrid from '../../components/sections/SolutionsGrid.astro';
+import InsightCards from '../../components/sections/InsightCards.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('insights');
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+const { post } = Astro.props as { post: CollectionEntry<'insights'> };
+const { Content } = await render(post);
+const d = post.data;
+const path = `/insights/${post.id}/`;
+const crumbs = [
+  { name: 'Insights', path: '/insights/' },
+  { name: d.title, path },
+];
+const dateFmt = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const schema = [{
+  '@type': 'Article',
+  '@id': `${site.url}${path}#article`,
+  headline: d.title,
+  description: d.description,
+  articleSection: d.category,
+  datePublished: d.pubDate.toISOString(),
+  dateModified: (d.updatedDate ?? d.pubDate).toISOString(),
+  author: { '@id': `${site.url}/#organization` },
+  publisher: { '@id': `${site.url}/#organization` },
+  mainEntityOfPage: `${site.url}${path}`,
+  image: `${site.url}/og/medinfra-default.jpg`,
+  inLanguage: 'en-IN',
+}];
+---
+<Layout
+  title={d.title}
+  description={d.description}
+  type="article"
+  breadcrumbs={crumbs}
+  schema={schema}
+  publishedTime={d.pubDate.toISOString()}
+  modifiedTime={(d.updatedDate ?? d.pubDate).toISOString()}
+>
+  <article>
+    <header class="bg-paper pb-14 pt-[128px] md:pb-16 md:pt-[164px]">
+      <div class="container-x">
+        <nav aria-label="Breadcrumb" class="mb-10" data-reveal>
+          <ol class="flex flex-wrap items-center gap-2 text-[0.85rem] text-mist">
+            <li><a href="/" class="transition-colors hover:text-ink">Home</a></li>
+            <li aria-hidden="true">/</li>
+            <li><a href="/insights/" class="transition-colors hover:text-ink">Insights</a></li>
+          </ol>
+        </nav>
+        <div class="max-w-4xl">
+          <p class="kicker" data-reveal>{d.category}</p>
+          <h1 class="display-lg mt-7 text-ink" data-reveal>{d.title}</h1>
+          <p class="lede mt-8" data-reveal>{d.excerpt}</p>
+          <p class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.9rem] text-mist" data-reveal>
+            <span>MedInfra Project Team</span>
+            <time datetime={d.pubDate.toISOString()}>{dateFmt.format(d.pubDate)}</time>
+            <span>{d.readingTime} min read</span>
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <div class="section-y border-t border-line bg-paper !pt-16">
+      <div class="container-x grid gap-14 lg:grid-cols-12">
+        <div class="prose-mi lg:col-span-7 lg:col-start-2">
+          <Content />
+        </div>
+        <aside class="lg:col-span-3 lg:col-start-10">
+          <div class="sticky top-28 rounded-[22px] border border-line bg-white p-7 shadow-(--shadow-elevated)">
+            <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-cobalt">Discuss your project</p>
+            <p class="mt-4 text-[0.98rem] leading-relaxed text-slate">Share the outline of your project. A project engineer will respond with the right scope structure and next steps.</p>
+            <a href="/contact/" class="btn btn-dark mt-6 w-full">
+              Start a conversation
+              <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+            </a>
+            <a href={site.phoneHref} class="link-u mt-5 text-[0.95rem] text-ink">{site.phone}</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  {d.related.length > 0 && (
+    <section class="section-y-sm bg-ivory">
+      <div class="container-x">
+        <span class="kicker" data-reveal>Related solutions</span>
+        <h2 class="display-md mb-12 mt-6 text-ink" data-reveal>Where this applies</h2>
+        <SolutionsGrid only={d.related} />
+      </div>
+    </section>
+  )}
+
+  <section class="section-y-sm bg-paper">
+    <div class="container-x">
+      <span class="kicker" data-reveal>More insights</span>
+      <h2 class="display-md mb-12 mt-6 text-ink" data-reveal>Keep reading</h2>
+      <InsightCards exclude={post.id} limit={2} />
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

@@ -1,0 +1,43 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import InsightCards from '../../components/sections/InsightCards.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../../data/site';
+
+const posts = await getCollection('insights');
+const crumbs = [{ name: 'Insights', path: '/insights/' }];
+const schema = [{
+  '@type': 'Blog',
+  name: 'MedInfra Insights',
+  url: `${site.url}/insights/`,
+  publisher: { '@id': `${site.url}/#organization` },
+  blogPost: posts.map((p) => ({
+    '@type': 'BlogPosting',
+    headline: p.data.title,
+    url: `${site.url}/insights/${p.id}/`,
+    datePublished: p.data.pubDate.toISOString(),
+  })),
+}];
+---
+<Layout
+  title="Insights — Hospital Planning & Engineering"
+  description="Technical notes from live healthcare projects — hospital DPRs, MGPS sizing and vendor-neutral equipment specifications — for promoters and project committees."
+  breadcrumbs={crumbs}
+  schema={schema}
+>
+  <PageHero
+    kicker="Insights"
+    lines={['Technical notes', 'from live healthcare', '*projects.*']}
+    lede="Practical guidance drawn from planning, engineering and commissioning work — written for promoters, administrators and project committees."
+    breadcrumbs={crumbs}
+  />
+  <section class="section-y bg-ivory">
+    <div class="container-x">
+      <h2 class="sr-only">Latest notes</h2>
+      <InsightCards limit={50} />
+    </div>
+  </section>
+  <CtaBand />
+</Layout>

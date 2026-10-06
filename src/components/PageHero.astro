@@ -1,0 +1,55 @@
+---
+interface Props {
+  kicker: string;
+  /** Headline lines; wrap a phrase in *asterisks* to colour it */
+  lines: string[];
+  lede?: string;
+  breadcrumbs?: { name: string; path: string }[];
+  /** Optional wide still from /public, shown as a rounded band under the headline */
+  image?: string;
+}
+const { kicker, lines, lede, breadcrumbs = [], image } = Astro.props;
+const fmt = (s: string) => s.replace(/\*(.+?)\*/g, '<em class="text-accent">$1</em>');
+---
+<section class="bg-paper pb-16 pt-[128px] md:pb-20 md:pt-[164px]">
+  <div class="container-x">
+    {breadcrumbs.length > 0 && (
+      <nav aria-label="Breadcrumb" class="mb-10" data-reveal>
+        <ol class="flex flex-wrap items-center gap-2 text-[0.85rem] text-mist">
+          <li><a href="/" class="transition-colors hover:text-ink active:opacity-70">Home</a></li>
+          {breadcrumbs.map((b, i) => (
+            <li class="flex items-center gap-2">
+              <span aria-hidden="true">/</span>
+              {i === breadcrumbs.length - 1
+                ? <span aria-current="page" class="text-slate">{b.name}</span>
+                : <a href={b.path} class="transition-colors hover:text-ink active:opacity-70">{b.name}</a>}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <span class="kicker" data-reveal>{kicker}</span>
+    <div class="mt-7 grid gap-10 lg:grid-cols-12 lg:items-end">
+      <h1 class="display-xl text-ink lg:col-span-8" data-split>
+        {lines.map((l, i) => (
+          <span class="line"><span style={`--i:${i}`} set:html={fmt(l)} /></span>
+        ))}
+      </h1>
+      {(lede || Astro.slots.has('default')) && (
+        <div class="lg:col-span-4 lg:pb-3">
+          {lede && <p class="lede" data-reveal style="--d:3">{lede}</p>}
+          <slot />
+        </div>
+      )}
+    </div>
+
+    {image && (
+      <div class="relative mt-14 aspect-[21/9] overflow-hidden rounded-[24px] bg-ivory md:aspect-[21/8]" data-reveal style="--d:4">
+        <img src={image} alt="" class="size-full scale-110 object-cover" loading="eager" fetchpriority="high" decoding="async" data-parallax="0.06" />
+        <div class="absolute inset-0 bg-cobalt/15 mix-blend-multiply" aria-hidden="true"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" aria-hidden="true"></div>
+      </div>
+    )}
+  </div>
+</section>

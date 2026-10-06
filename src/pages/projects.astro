@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import ScrollFilm from '../components/ScrollFilm.astro';
+import Process from '../components/sections/Process.astro';
+import Sectors from '../components/sections/Sectors.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { campusChapters, stages } from '../data/company';
+
+const crumbs = [{ name: 'Projects', path: '/projects/' }];
+const schema = [{
+  '@type': 'HowTo',
+  name: 'MedInfra complete healthcare project delivery model',
+  description: 'Eight stages from concept and feasibility to maintenance and lifecycle support, delivered by one organisation.',
+  step: stages.map((s, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: s.title,
+    text: s.items.join(', '),
+  })),
+}];
+---
+<Layout
+  title="Healthcare Project Delivery Model"
+  description="Eight stages, one team: feasibility, healthcare planning, engineering, biomedical planning, procurement, execution, commissioning and lifecycle support."
+  breadcrumbs={crumbs}
+  schema={schema}
+>
+  <PageHero
+    kicker="Complete Project Delivery Model"
+    lines={['Eight stages.', 'One continuous chain', 'of *responsibility.*']}
+    lede="Each stage hands over to the next inside the same organisation — so drawings, specifications, BOQs and commissioning records stay consistent from the first budget framework to the final handover."
+    breadcrumbs={crumbs}
+    image="/frames/campus/poster.webp"
+  />
+
+  <section class="section-y bg-paper">
+    <div class="container-x">
+      <h2 class="sr-only">The eight stages</h2>
+      <Process />
+      <div class="mt-12 rounded-[22px] bg-navy-900 p-8 text-center text-white md:p-12" data-reveal>
+        <p class="display-md">One project. One team. <em class="text-sky">One point of accountability.</em></p>
+        <p class="mt-4 font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-white/45">MedInfra Delivery Model</p>
+      </div>
+    </div>
+  </section>
+
+  <ScrollFilm
+    id="project-film"
+    name="campus"
+    frames={141}
+    variant="slot"
+    length={380}
+    label="Aerial visualisation of a MedInfra healthcare facility project"
+    chapters={campusChapters}
+  >
+    <div slot="intro" class="flex h-full max-w-4xl flex-col justify-center pt-[84px]">
+      <span class="kicker kicker--dot">Project Visualisation</span>
+      <h2 class="display-xl mt-7 text-white">From drawing board to <em class="text-sky">working hospital.</em></h2>
+    </div>
+  </ScrollFilm>
+
+  <section class="section-y bg-ivory">
+    <div class="container-x">
+      <div class="mb-16 grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-7">
+          <span class="kicker" data-reveal>Project types</span>
+          <h2 class="display-lg mt-6 text-ink" data-reveal>Private healthcare and <em class="text-cobalt">public health</em> projects</h2>
+        </div>
+        <p class="lede lg:col-span-5" data-reveal>
+          The technical scope is the same; the documentation, approvals and procurement routes are not. MedInfra is set
+          up to run both.
+        </p>
+      </div>
+      <Sectors />
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

@@ -1,0 +1,90 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { nav, site } from '../data/site';
+import { solutions } from '../data/solutions';
+
+const year = new Date().getFullYear();
+---
+<footer class="on-dark relative overflow-hidden bg-navy-950 text-white/70">
+
+  <div class="container-x relative">
+    <!-- Closing statement -->
+    <div class="grid gap-10 border-b border-white/10 py-20 md:py-28 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-8">
+        <span class="kicker kicker--dot">One accountable partner</span>
+        <p class="display-lg mt-6 text-white">
+          From the first drawing to final commissioning — <em class="text-sky">one partner</em> for your healthcare project.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-3 lg:col-span-4 lg:justify-end">
+        <a href="/contact/" class="btn btn-primary">
+          Discuss Your Project
+          <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+        </a>
+        <a href={site.phoneHref} class="btn btn-ghost-light">{site.phone}</a>
+      </div>
+    </div>
+
+    <!-- Columns -->
+    <div class="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <a href="/" class="inline-block rounded-lg transition-opacity hover:opacity-85 active:opacity-70" aria-label={`${site.name} — home`}>
+          <Logo tone="white" eager={false} />
+        </a>
+        <p class="mt-6 max-w-sm text-[0.95rem] leading-relaxed">
+          End-to-end planning, engineering, procurement, execution, commissioning and maintenance for healthcare
+          projects across the private and government sectors.
+        </p>
+      </div>
+
+      <div class="lg:col-span-2">
+        <h2 class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-white/45">Company</h2>
+        <ul class="mt-5 space-y-3 text-[0.95rem]">
+          {nav.map((item) => (
+            <li><a href={item.href} class="foot-link">{item.label}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="lg:col-span-3">
+        <h2 class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-white/45">Solutions</h2>
+        <ul class="mt-5 space-y-3 text-[0.95rem]">
+          {solutions.map((s) => (
+            <li><a href={`/solutions/${s.slug}/`} class="foot-link">{s.short}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="lg:col-span-3">
+        <h2 class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-white/45">Registered Office</h2>
+        <address class="mt-5 text-[0.95rem] not-italic leading-relaxed">
+          {site.legalName}<br />
+          {site.address.line1}<br />
+          {site.address.line2}, {site.address.locality}<br />
+          {site.address.city} – {site.address.postalDisplay}<br />
+          {site.address.region}, {site.address.country}
+        </address>
+        <ul class="mt-5 space-y-2 text-[0.95rem]">
+          <li><a href={site.phoneHref} class="foot-link">{site.phone}</a></li>
+          <li><a href={`mailto:${site.email}`} class="foot-link">{site.email}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4 border-t border-white/10 py-7 text-[0.82rem] text-white/45 sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} {site.legalName}. All rights reserved.</p>
+      <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em]">{site.tagline}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot-link {
+    display: inline-block;
+    color: rgb(255 255 255 / 0.7);
+    transition: color 0.25s, transform 0.5s var(--ease-spring);
+  }
+  .foot-link:hover, .foot-link:focus-visible { color: #fff; transform: translateX(3px); }
+  .foot-link:active { opacity: 0.7; }
+</style>

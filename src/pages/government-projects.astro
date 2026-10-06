@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Process from '../components/sections/Process.astro';
+import Capability from '../components/sections/Capability.astro';
+import SolutionsGrid from '../components/sections/SolutionsGrid.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { sectors } from '../data/company';
+import { getSolution } from '../data/solutions';
+import { site } from '../data/site';
+
+const gov = getSolution('government-healthcare-projects')!;
+const crumbs = [{ name: 'Government Projects', path: '/government-projects/' }];
+const schema = [{
+  '@type': 'Service',
+  name: 'Government healthcare projects',
+  serviceType: 'Government healthcare infrastructure project delivery',
+  description: gov.metaDescription,
+  url: `${site.url}/government-projects/`,
+  provider: { '@id': `${site.url}/#organization` },
+  areaServed: { '@type': 'Country', name: 'India' },
+  audience: { '@type': 'Audience', audienceType: 'Government departments and public healthcare institutions' },
+}];
+---
+<Layout
+  title="Government Healthcare Projects & Tenders"
+  description="DPR preparation, tender support, GeM supply and implementation for district hospitals, medical colleges, PHCs, CHCs and public health infrastructure."
+  breadcrumbs={crumbs}
+  schema={schema}
+>
+  <PageHero
+    kicker="Government & Public Health"
+    lines={['Public healthcare', 'infrastructure,', '*delivered to tender.*']}
+    lede={sectors.government.text}
+    breadcrumbs={crumbs}
+    image="/frames/campus/poster.webp"
+  >
+    <div class="mt-8 flex flex-wrap gap-3" data-reveal style="--d:4">
+      <a href="/contact/" class="btn btn-primary">
+        Discuss a public project
+        <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span>
+      </a>
+      <a href="/solutions/government-healthcare-projects/" class="btn btn-ghost">Scope of work</a>
+    </div>
+  </PageHero>
+
+  <section class="section-y bg-paper">
+    <div class="container-x grid gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-6">
+        <span class="kicker" data-reveal>How we work with government</span>
+        <h2 class="display-md mt-6 text-ink" data-reveal>Same engineering standards, with the documentation each public project demands</h2>
+        <div class="mt-8 space-y-6">
+          {gov.intro.map((p) => <p class="lede !max-w-none" data-reveal>{p}</p>)}
+        </div>
+      </div>
+      <div class="lg:col-span-5 lg:col-start-8">
+        <div class="rounded-[24px] border border-line bg-white p-8 shadow-(--shadow-elevated) md:p-10" data-reveal>
+          <p class="font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-cobalt">Institutions we serve</p>
+          <ul class="mt-6 divide-y divide-line">
+            {sectors.government.items.map((it) => (
+              <li class="flex items-center gap-4 py-3.5 text-[1rem] text-ink">
+                <span class="grid size-5 shrink-0 place-items-center rounded-full bg-accent/10 text-accent"><Icon name="check" class="size-3" strokeWidth={2.4} /></span>
+                {it}
+              </li>
+            ))}
+          </ul>
+          <p class="mt-8 font-semibold text-[0.75rem] uppercase tracking-[0.1em] text-cobalt">Scope</p>
+          <ul class="mt-4 flex flex-wrap gap-2">
+            {gov.scope.map((it) => (
+              <li class="rounded-full bg-ivory px-3.5 py-1.5 text-[0.85rem] text-ink">{it}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Capability />
+
+  <section class="section-y bg-ivory">
+    <div class="container-x">
+      <div class="mb-14 max-w-3xl">
+        <span class="kicker" data-reveal>Delivery model</span>
+        <h2 class="display-lg mt-6 text-ink" data-reveal>From DPR to <em class="text-cobalt">handover</em></h2>
+      </div>
+      <Process highlight={gov.stages} />
+    </div>
+  </section>
+
+  <section class="section-y bg-paper">
+    <div class="container-x">
+      <div class="mb-14">
+        <span class="kicker" data-reveal>Related solutions</span>
+        <h2 class="display-lg mt-6 text-ink" data-reveal>Capabilities for public projects</h2>
+      </div>
+      <SolutionsGrid only={['government-healthcare-projects', ...gov.related.slice(0, 2)]} />
+    </div>
+  </section>
+
+  <CtaBand title="Planning a public healthcare project?" />
+</Layout>

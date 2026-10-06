@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import { solutions } from '../data/solutions';
+---
+<Layout title="Page not found" description="The page you were looking for could not be found." noindex>
+  <section class="on-dark relative isolate flex min-h-svh items-center overflow-hidden bg-navy-950 py-40 text-white">
+    <div class="container-x">
+      <p class="kicker kicker--dot">Error 404</p>
+      <h1 class="display-xl mt-7 max-w-[14ch]">This page isn’t on the <em class="text-sky">drawings.</em></h1>
+      <p class="lede mt-8 !text-white/70">The page may have moved. Try one of these instead.</p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a href="/" class="btn btn-primary">Back to home <span class="btn-arrow"><Icon name="arrow" class="size-3.5" strokeWidth={2} /></span></a>
+        <a href="/contact/" class="btn btn-ghost-light">Contact MedInfra</a>
+      </div>
+      <ul class="mt-16 flex flex-wrap gap-x-6 gap-y-3 text-white/60">
+        {solutions.map((s) => <li><a href={`/solutions/${s.slug}/`} class="link-u">{s.short}</a></li>)}
+      </ul>
+    </div>
+  </section>
+</Layout>

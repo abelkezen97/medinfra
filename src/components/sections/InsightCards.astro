@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '../Icon.astro';
+interface Props { exclude?: string; limit?: number }
+const { exclude, limit = 3 } = Astro.props;
+const posts = (await getCollection('insights'))
+  .filter((p) => p.id !== exclude)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, limit);
+---
+<ul class="grid gap-6 md:grid-cols-3">
+  {posts.map((p, i) => (
+    <li data-reveal style={`--d:${i}`}>
+      <a href={`/insights/${p.id}/`} class="group flex h-full flex-col rounded-[22px] border border-line bg-white p-8 shadow-(--shadow-elevated) transition-[transform,box-shadow,border-color] duration-700 ease-(--ease-spring) hover:-translate-y-1.5 hover:border-transparent hover:shadow-(--shadow-floating) active:translate-y-0">
+        <div class="flex items-center justify-between font-semibold text-[0.75rem] uppercase tracking-[0.1em]">
+          <span class="text-cobalt">{p.data.category}</span>
+          <span class="text-mist">{p.data.readingTime} min read</span>
+        </div>
+        <h3 class="display-sm mt-10 text-ink">{p.data.title}</h3>
+        <p class="mt-4 text-[0.97rem] leading-relaxed text-slate">{p.data.excerpt}</p>
+        <span class="mt-auto flex items-center gap-2 pt-8 text-[0.9rem] font-medium text-cobalt">
+          Read the note
+          <Icon name="arrow" class="size-4 transition-transform duration-500 ease-(--ease-spring) group-hover:translate-x-1.5" strokeWidth={2} />
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>

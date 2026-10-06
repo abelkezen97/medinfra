@@ -1,0 +1,147 @@
+---
+import { site } from '../data/site';
+
+export interface SeoProps {
+  title: string;
+  description: string;
+  /** Path to a social image in /public, or an absolute URL */
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  /** Extra JSON-LD nodes for this page (merged into one @graph) */
+  schema?: Record<string, unknown>[];
+  breadcrumbs?: { name: string; path: string }[];
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+const {
+  title,
+  description,
+  image = '/og/medinfra-default.jpg',
+  imageAlt = 'MedInfra — Complete Healthcare Project Solutions',
+  type = 'website',
+  noindex = false,
+  schema = [],
+  breadcrumbs,
+  publishedTime,
+  modifiedTime,
+} = Astro.props as SeoProps;
+
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const imageUrl = new URL(image, site.url).href;
+const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+
+const orgId = `${site.url}/#organization`;
+
+// Sitewide entities: the company (as a local professional service) and the website.
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': ['Organization', 'ProfessionalService'],
+    '@id': orgId,
+    name: site.name,
+    legalName: site.legalName,
+    slogan: site.tagline,
+    description: site.description,
+    url: site.url,
+    logo: { '@type': 'ImageObject', url: `${site.url}/brand/logo-mark.png`, width: 512, height: 512 },
+    image: `${site.url}/og/medinfra-default.jpg`,
+    email: site.email,
+    telephone: site.phone,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: `${site.address.line1}, ${site.address.line2}, ${site.address.locality}`,
+      addressLocality: site.address.city,
+      addressRegion: site.address.region,
+      postalCode: site.address.postalCode,
+      addressCountry: site.address.countryCode,
+    },
+    openingHoursSpecification: [{
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: site.hours.days,
+      opens: site.hours.opens,
+      closes: site.hours.closes,
+    }],
+    areaServed: { '@type': 'Country', name: 'India' },
+    knowsAbout: [
+      'Hospital planning', 'Hospital project consultancy', 'Detailed Project Report (DPR)', 'Modular operation theatre',
+      'ICU infrastructure', 'Medical gas pipeline systems', 'Biomedical engineering', 'CSSD planning',
+      'Hospital HVAC', 'Healthcare project management', 'Biomedical equipment AMC', 'Government healthcare tenders',
+    ],
+    contactPoint: [{
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      telephone: site.phone,
+      email: site.email,
+      areaServed: 'IN',
+    }],
+  },
+  {
+    '@type': 'WebSite',
+    '@id': `${site.url}/#website`,
+    url: site.url,
+    name: site.name,
+    description: site.description,
+    publisher: { '@id': orgId },
+    inLanguage: 'en-IN',
+  },
+  {
+    '@type': 'WebPage',
+    '@id': `${canonical}#webpage`,
+    url: canonical,
+    name: fullTitle,
+    description,
+    isPartOf: { '@id': `${site.url}/#website` },
+    about: { '@id': orgId },
+    inLanguage: 'en-IN',
+    primaryImageOfPage: imageUrl,
+  },
+];
+
+if (breadcrumbs?.length) {
+  graph.push({
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumb`,
+    itemListElement: [{ name: 'Home', path: '/' }, ...breadcrumbs].map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: b.name,
+      item: new URL(b.path, site.url).href,
+    })),
+  });
+}
+graph.push(...schema);
+
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+---
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex
+  ? <meta name="robots" content="noindex, follow" />
+  : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />}
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content={site.locale} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<meta name="geo.region" content="IN-KL" />
+<meta name="geo.placename" content="Thiruvananthapuram" />
+
+<script type="application/ld+json" set:html={jsonLd} />
